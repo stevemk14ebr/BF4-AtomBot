@@ -1,8 +1,6 @@
 # BF4-AtomBot
 Latest version of my personal BF4 Hack
 
-My personal BF4 hack
-
 #Features
 
 - ESP
@@ -22,6 +20,7 @@ My personal BF4 hack
 - "DaMenu" as an ingame hack menu
   - DirectX Toolkit
 - "PolyHook" as hooking backend
+  - Capstone Disassembler
 - "RandomGen" as a PRNG
 
 #Credits:
