@@ -24,3 +24,11 @@ My personal BF4 hack
 - "PolyHook" as hooking backend
 - "RandomGen" as a PRNG
 
+#Credits:
+- UnknownCheats.me forum members
+  - IChooseYou 
+  - SmallC
+  - A200k
+  - Txt231
+  - ShellBullet
+  - Many, many others
