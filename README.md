@@ -1,7 +1,9 @@
 # BF4-AtomBot
 Latest version of my personal BF4 Hack
 
-My personal BF4 hack, includes:
+My personal BF4 hack
+
+#Features
 
 - ESP
   - Player
@@ -16,9 +18,9 @@ My personal BF4 hack, includes:
   - Player Velocity
   - Scope Zeroing
   
-  Uses:
-  - "DaMenu" as an ingame hack menu
-    - DirectX Toolkit
-  - "PolyHook" as hooking backend
-  - "RandomGen" as a PRNG
+#Uses:
+- "DaMenu" as an ingame hack menu
+  - DirectX Toolkit
+- "PolyHook" as hooking backend
+- "RandomGen" as a PRNG
 
