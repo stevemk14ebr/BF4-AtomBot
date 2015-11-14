@@ -34,7 +34,7 @@ struct AimbotSettings
 	AimbotSettings()
 	{
 		m_Enabled = true;
-		m_AimBone = UpdatePoseResultData::BONES::Spine;
+		m_AimBone = UpdatePoseResultData::BONES::Head;
 		m_MinTimeToTarget = .7f;
 		m_MaxTimeToTarget = 1.2f;
 	}
@@ -48,7 +48,7 @@ struct ClassInfos
 #include "Hack Core/AimbotSmoother.h"
 #include "Hack Core/AimbotPredictor.h"
 #include "Hack Core/RandomGen.h"
-
+ 
 class Core
 {
 public:
@@ -244,10 +244,10 @@ void Core::ESP(RenderInterface* Renderer)
 			for (int i = 0; i < pEnemyRag->m_AnimationSkeleton->m_BoneCount; i++)
 			{
 				SM::Vector3 BoneVec;
-				if(!pEnemyRag->GetBone((UpdatePoseResultData::BONES)i, BoneVec))
+				if (!pEnemyRag->GetBone((UpdatePoseResultData::BONES)i, BoneVec))
 					continue;
 
-				if(!WorldToScreen(BoneVec))
+				if (!WorldToScreen(BoneVec))
 					continue;
 
 				Renderer->RenderText(Vector2f(BoneVec.x, BoneVec.y), ESPColor, "%d", i);

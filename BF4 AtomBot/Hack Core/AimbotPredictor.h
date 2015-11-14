@@ -1,4 +1,5 @@
 #pragma once
+#include "Hack Core/PolynomialSolver.h"
 
 class AimbotPredictor
 {
@@ -6,6 +7,7 @@ public:
 	float PredictLocation(ClientSoldierEntity* pLocalEnt, ClientControllableEntity* pEnemy,SM::Vector3& AimPoint,const SM::Matrix& ShootSpace);
 private:
 	float DoPrediction(const SM::Vector3& ShootSpace, SM::Vector3& AimPoint, const SM::Vector3& MyVelocity, const SM::Vector3& EnemyVelocity, const SM::Vector3& BulletSpeed,const float Gravity,const WeaponZeroingEntry& Zero);
+	PolynomialSolver m_Solver;
 };
 
 float AimbotPredictor::PredictLocation(ClientSoldierEntity* pLocalEnt, ClientControllableEntity* pEnemy, SM::Vector3& AimPoint,const SM::Matrix& ShootSpace)
@@ -70,19 +72,41 @@ float AimbotPredictor::PredictLocation(ClientSoldierEntity* pLocalEnt, ClientCon
 
 float AimbotPredictor::DoPrediction(const SM::Vector3& ShootSpace, SM::Vector3& AimPoint, const SM::Vector3& MyVelocity, const SM::Vector3& EnemyVelocity, const SM::Vector3& BulletSpeed, const float Gravity, const WeaponZeroingEntry& Zero)
 {
-	SM::Vector3 Dist = (AimPoint - ShootSpace);
-	float Distance = Dist.Length();
-	float AirTime = Distance / fabs(BulletSpeed.z);
-	AimPoint += EnemyVelocity*AirTime;
+	SM::Vector3 RelativePos = (AimPoint-ShootSpace);
+	SM::Vector3 GravityVec = SM::Vector3(0, fabs(Gravity),0);
+	auto fApproxPos = [](SM::Vector3& CurPos,const SM::Vector3& Velocity,const SM::Vector3& Accel,const float Time)->SM::Vector3 {
+		return CurPos + Velocity*Time + .5f*Accel*Time*Time;                               
+	};                                                                     
 
-	float HorizDistance = Length2D(Dist);
-	float HorizontalAirTime = HorizDistance / fabs(BulletSpeed.z);
-	float Drop = (.5f*fabs(Gravity)*HorizontalAirTime*HorizontalAirTime);
-	AimPoint.y += Drop;
+	//http://playtechs.blogspot.com/2007/04/aiming-at-moving-target.html
+	double a = .25f * GravityVec.Dot(GravityVec);
+	double b = EnemyVelocity.Dot(GravityVec);
+	double c = RelativePos.Dot(GravityVec) + EnemyVelocity.Dot(EnemyVelocity) - (BulletSpeed.z * BulletSpeed.z);
+	double d = 2.0f*(RelativePos.Dot(EnemyVelocity));
+	double e = RelativePos.Dot(RelativePos);
+
+	//Calculate time projectile is in air
+	std::vector<double> Solutions;
+	int NumSol=m_Solver.SolveQuartic(a, b, c, d, e, Solutions);
+
+	//find smallest non-negative real root
+	float ShortestAirTime = 99999.0f;
+	for (int i = 0; i < NumSol; i++)
+	{
+		float AirTime = Solutions[i];
+		if(AirTime<0)
+			continue;
+
+		if (AirTime < ShortestAirTime)
+			ShortestAirTime = AirTime;
+	}
+	//Extrapolate position on velocity, and account for bullet drop
+	AimPoint = fApproxPos(AimPoint,EnemyVelocity,GravityVec,ShortestAirTime);
 
 	if (Zero.m_ZeroDistance == -1.0f)
 		return 0.0f;
 
+	//This is still an approximation, fix later
 	float ZeroAirTime = Zero.m_ZeroDistance / fabs(BulletSpeed.z);
 	float ZeroDrop = (.5f*fabs(Gravity)*ZeroAirTime*ZeroAirTime);
 	float Theta = atan2(ZeroDrop, Zero.m_ZeroDistance);

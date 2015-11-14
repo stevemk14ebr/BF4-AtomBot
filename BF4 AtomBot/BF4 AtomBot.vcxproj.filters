@@ -209,6 +209,9 @@
     <ClInclude Include="Hack Core\AimbotPredictor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Hack Core\PolynomialSolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="DXTK\Inc\SimpleMath.inl">

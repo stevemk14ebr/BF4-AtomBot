@@ -203,6 +203,7 @@
     <ClInclude Include="Hack Core\AimbotSmoother.h" />
     <ClInclude Include="Hack Core\BotPlayerManager.h" />
     <ClInclude Include="Hack Core\Core.h" />
+    <ClInclude Include="Hack Core\PolynomialSolver.h" />
     <ClInclude Include="Hack Core\RandomGen.h" />
     <ClInclude Include="Menu\DaMenu.h" />
     <ClInclude Include="Menu\ElementManager.h" />
